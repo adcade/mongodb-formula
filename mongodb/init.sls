@@ -5,14 +5,15 @@
 # Modern versions of MongoDB
 
 {% set mongo_directory = salt['pillar.get']('mongodb:mongo_directory', '/mongodb') -%}
-{% set metrics_node = salt['pillar.get']('mongodb:metrics_node', None) -%}
-{% set settings = salt['pillar.get']('mongodb:mongo_settings', None) -%}
-{% set version = salt['pillar.get']('mongodb:version', '2.4.8') -%}
-{% set replica_set = salt['grains.get']('replica_set', None) -%}
+{% set settings = salt['pillar.get']('mongodb:mongo_settings') -%}
+{% set version = salt['pillar.get']('mongodb:version') -%}
+{% set use_ppa = salt['pillar.get']('mongodb:use_ppa', True) -%}
+{% set replica_set = salt['grains.get']('replica_set') -%}
 
 include:
   - .replica
 
+{% if use_ppa %}
 mongo_ppa:
   pkgrepo.managed:
     - humanname: MongoDB PPA
@@ -23,9 +24,18 @@ mongo_ppa:
 
 mongodb-10gen:
   pkg.installed:
+{% if version %}
     - version: {{ version }}
+{% endif %}
     - require:
       - pkgrepo: mongo_ppa
+
+{% else %}
+
+mongodb-server:
+  - pkg.installed
+
+{% endif %}
 
 {{ mongo_directory }}:
   file.directory:
@@ -55,14 +65,13 @@ mongodb-10gen:
     - group: root
     - mode: 644
     - template: jinja
-    - context: {
-      {% if replica_set %}
-      replica_name: {{ replica_set }},
-      {% endif %}
-      settings: {{ settings }}
-    }
+    - context:
+        replica_set: {{ replica_set }}
+        settings: {{ settings }}
 
 mongodb:
   service.running:
-    - watch: 
+    - watch:
       - file: /etc/mongodb.conf
+    - require:
+      - pkg: mongodb-server
