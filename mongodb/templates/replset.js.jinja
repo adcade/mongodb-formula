@@ -1,0 +1,18 @@
+// MongoDB Replica Set Configuration
+// This file is managed by Salt
+  rsconf = {_id : "{{ name }}", members: [
+  {%- for server in servers %}
+    {%- for key, value in server.items() %}
+      {{ value }},
+    {%- endfor -%}
+ {%- endfor %}
+]};
+
+{%- if manage_replica_set and not manage_replica_set %}
+if (rs.status()['ok'] != 1) { rs.initiate(rsconf); }
+{%- endif %}
+
+{%- if reconfigure_replica_set and manage_replica_set %}
+rs.reconfig(rsconf);
+{%- endif %}
+
