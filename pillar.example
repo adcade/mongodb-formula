@@ -1,11 +1,27 @@
 mongodb:
   version: 2.4.8
   mongo_directory: /mongodb
-  manage_replica_set: False
-  reconfigure_replica_set: False
+  manage_replica_set: True
+  reconfigure_replica_set: True
   use_ppa: True
   mongo_settings:
     dbpath: /mongodb/data
     logpath: /mongodb/log/mongodb.log
     logappend: True
     rest: True
+  replica_settings:
+    servers:
+      - someserver:
+          _id: 0
+          host: someserver:27017
+          hidden: "true"
+          slaveDelay: 3600
+          priority: 0
+      - anotherserver:
+          _id: 1
+          host: anotherserver:27017
+          priority: 1
+      - onemoreserver:
+          _id: 2
+          host: onemoreserver:27017
+          priority: 1
