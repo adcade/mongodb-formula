@@ -12,5 +12,5 @@ Install MongoDB from PPA or natively.
 Available states
 ================
 
-``nginx``
+``mongodb``
 ---------
