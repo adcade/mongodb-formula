@@ -1,10 +1,10 @@
 {% set replica_set = salt['grains.get']('replica_set', None) -%}
-{% set replica_settings = salt['pillar.get']('mongodb:replica_settings', None) -%}
+{% set replica_settings = salt['pillar.get']('mongodb:replica_settings') -%}
 {% set manage_replica_set = salt['pillar.get']('mongodb:manage_replica_set', False) -%}
 {% set reconfigure_replica_set = salt['pillar.get']('mongodb:reconfigure_replica_set', False) -%}
 {% set mongo_settings = salt['pillar.get']('mongodb:mongo_settings') -%}
 
-{% if replica_set and replica_settings %}
+{% if replica_set %}
 
 {% set name = replica_set %}
 {% set servers = replica_settings.servers %}
@@ -16,12 +16,11 @@
     - group: root
     - mode: 644
     - template: jinja
-    - context: {
-      name: {{ name }},
-      servers: {{ servers }},
-      manage_replica_set: {{ manage_replica_set }},
-      reconfigure_replica_set: {{ reconfigure_replica_set }}
-    }
+    - context:
+        name: {{ name }},
+        servers: {{ servers }},
+        manage_replica_set: {{ manage_replica_set }},
+        reconfigure_replica_set: {{ reconfigure_replica_set }}
 
 run_replica_set:
   cmd.run:

@@ -5,9 +5,9 @@
 # Modern versions of MongoDB
 
 {% set mongo_directory = salt['pillar.get']('mongodb:mongo_directory', '/mongodb') -%}
+{% set use_ppa = salt['pillar.get']('mongodb:use_ppa', True) -%}
 {% set settings = salt['pillar.get']('mongodb:mongo_settings') -%}
 {% set version = salt['pillar.get']('mongodb:version') -%}
-{% set use_ppa = salt['pillar.get']('mongodb:use_ppa', True) -%}
 {% set replica_set = salt['grains.get']('replica_set') -%}
 
 include:
@@ -74,4 +74,8 @@ mongodb:
     - watch:
       - file: /etc/mongodb.conf
     - require:
+    {% if use_ppa %}
       - pkg: mongodb-server
+    {% else %}
+      - pkg: mongodb-server
+    {% endif %}
