@@ -75,7 +75,7 @@ mongodb:
       - file: /etc/mongodb.conf
     - require:
     {% if use_ppa %}
-      - pkg: mongodb-server
+      - pkg: mongodb-10gen
     {% else %}
       - pkg: mongodb-server
     {% endif %}
