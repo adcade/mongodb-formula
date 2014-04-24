@@ -60,7 +60,7 @@ mongodb-server:
 
 /etc/mongodb.conf:
   file.managed:
-    - source: salt://mongo/templates/mongodb.conf.jinja
+    - source: salt://mongodb/templates/mongodb.conf.jinja
     - user: root
     - group: root
     - mode: 644
